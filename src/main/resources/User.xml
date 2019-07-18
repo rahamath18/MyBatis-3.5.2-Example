@@ -1,0 +1,53 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace = "User">
+
+   <resultMap id = "result" type = "com.test.mybatis.User">
+      <result property = "id" column = "ID"/>	    
+   </resultMap>
+   
+   <resultMap id = "result2" type = "com.test.mybatis.User">
+      <result property = "id" column = "ID"/>
+      <result property = "firstName" column = "FIRST_NAME"/>
+      <result property = "lastName" column = "LAST_NAME"/>
+      <result property = "email" column = "EMAIL"/>
+   </resultMap>
+
+   <insert id = "insertUser" parameterType = "com.test.mybatis.User">
+      INSERT INTO USER (FIRST_NAME, LAST_NAME, EMAIL) VALUES (#{firstName}, #{lastName}, #{email});
+      <selectKey keyProperty = "id" resultType = "int" order = "AFTER">
+         select last_insert_id() as id
+      </selectKey>   
+   </insert>
+   
+   <select id = "getAllUsers" resultMap = "result">
+      SELECT * FROM USER; 
+   </select>
+    
+   <select id = "getUserById" parameterType = "int" resultMap = "result">
+      SELECT * FROM USER WHERE ID = #{id};
+   </select>
+   
+   <update id = "updateUser" parameterType = "com.test.mybatis.User">
+      UPDATE USER SET LAST_NAME = #{lastName}, EMAIL = #{email} WHERE ID = #{id};
+   </update>
+   
+   <delete id = "deleteUserById" parameterType = "int">
+      DELETE from USER WHERE ID = #{id};
+   </delete>
+   
+   <select id = "callByUserId" resultMap = "result2" parameterType = "com.test.mybatis.User" statementType = "CALLABLE">
+      {call getUserById(#{id, jdbcType = INTEGER, mode = IN})}
+   </select>
+   
+   <select id = "getUsersByEmail" parameterType = "com.test.mybatis.User" resultType = "com.test.mybatis.User">
+	   SELECT * FROM USER		 
+	   <if test = "email != null">
+	   	  <bind name="pattern" value="'%' + email + '%'" />
+	      WHERE EMAIL LIKE #{pattern}
+	   </if> 
+	</select>
+    	
+</mapper>

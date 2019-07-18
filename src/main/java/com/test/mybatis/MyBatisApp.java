@@ -43,9 +43,6 @@ public class MyBatisApp {
 	private static void dynamicSql(SqlSession session, String likeEmail) {
 		try {
 			System.out.println("Using MyBatis - Dynamic SQL...");
-			User user = new User();
-			user.setId(3);
-
 			List<User> userList = session.selectList("User.getUsersByEmail", likeEmail);
 			System.out.println("Using MyBatis - Dynamic SQL..." + userList);
 		} catch (Exception e) {
@@ -131,7 +128,6 @@ public class MyBatisApp {
 			session.insert("User.insertUser", newUser);
 			System.out.println("After Save : " + newUser);
 			
-
 			for (int i = 2; i <= 3; i++) {
 				User user = new User("User-" + i, "U-" + i, "user-" + i + "@info.com");
 				session.insert("User.insertUser", user);
